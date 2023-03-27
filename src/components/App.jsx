@@ -1,75 +1,50 @@
-import React from 'react';
 import { nanoid } from 'nanoid';
+import useLocalStorage from '../services/useLocalStorage';
+import * as storageKeys from '../services/localStorageKeys';
 import ContactForm from './ContactForm/ContactForm';
 import Filter from './Filter/Filter';
 import ContactList from './ContactList/ContactList';
 import css from './app.module.css';
 
-export class App extends React.Component {
-  state = {
-    contacts: [],
-    filter: '',
-  };
 
-  handleChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
-  };
+export function App() {
+  const [contacts, setContacts] = useLocalStorage(storageKeys.CONTACTS_KEY, []);
+  const [filter, setFilter] = useLocalStorage(storageKeys.FILTER_KEY, '');
 
-  addContact = contactFormState => {
-    const { name, number } = contactFormState;
-    const isInContacts = this.state.contacts.some(
+  const addContact = contactFormValues => {
+    const { name, number } = contactFormValues;
+
+    const isInContacts = contacts.some(
       contact =>
         contact.name.toLowerCase() === name.toLowerCase() ||
         contact.number === number
     );
-
     if (isInContacts) {
       alert(`${name} is already in contacts.`);
       return;
     }
 
-    this.setState(prevState => ({
-      contacts: [...prevState.contacts, { id: nanoid(), ...contactFormState }],
-    }));
+    setContacts(() => [...contacts, { id: nanoid(), ...contactFormValues }]);
   };
 
-  deleteContact = event => {
-    const { id } = event.target;
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== id),
-    }));
-  };
-
-  componentDidMount() {
-    const storageContacts = localStorage.getItem('contacts');
-    if (storageContacts) {
-      try {
-        this.setState({ contacts: JSON.parse(storageContacts) });
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
-  }
-
-  componentDidUpdate() {
-    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-  }
-
-  render() {
-    return (
-      <div className={css.container}>
-        <h1 className={css.title}>Phonebook</h1>
-        <ContactForm addContact={this.addContact} />
-
-        <h2 className={css.title}>Contacts</h2>
-        <Filter filter={this.state.filter} handleChange={this.handleChange} />
-        <ContactList
-          contacts={this.state.contacts}
-          filter={this.state.filter}
-          deleteContact={this.deleteContact}
-        />
-      </div>
+  const deleteContact = event => {
+    setContacts(() =>
+      contacts.filter(contact => contact.id !== event.target.id)
     );
-  }
+  };
+
+  return (
+    <div className={css.container}>
+      <h1 className={css.title}>Phonebook</h1>
+      <ContactForm addContact={addContact} />
+
+      <h2 className={css.title}>Contacts</h2>
+      <Filter filter={filter} setFilter={setFilter} />
+      <ContactList
+        contacts={contacts}
+        filter={filter}
+        deleteContact={deleteContact}
+      />
+    </div>
+  );
 }
