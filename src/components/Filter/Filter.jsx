@@ -12,7 +12,7 @@ export default function Filter({ filter, setFilter }) {
         type="text"
         name="filter"
         value={filter}
-        onChange={event => setFilter(event.target.value)}
+        onChange={setFilter}
       />
     </>
   );

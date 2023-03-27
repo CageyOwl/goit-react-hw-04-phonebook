@@ -39,7 +39,7 @@ export function App() {
       <ContactForm addContact={addContact} />
 
       <h2 className={css.title}>Contacts</h2>
-      <Filter filter={filter} setFilter={setFilter} />
+      <Filter filter={filter} setFilter={event => setFilter(event.target.value)} />
       <ContactList
         contacts={contacts}
         filter={filter}
