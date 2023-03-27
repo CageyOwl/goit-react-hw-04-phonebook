@@ -1,0 +1,30 @@
+.adding-form {
+    display: inline-block;
+    min-width: 360px;
+    padding: 12px;
+    text-align: left;
+    border: 1px #333 solid;
+}
+
+.adding-form__label {
+    display: block;
+    font-size: 24px;
+}
+
+.adding-form__input {
+    display: block;
+    margin-bottom: 16px;
+}
+
+.adding-form__input:focus {
+    box-shadow: 0 0 8px rgb(0, 119, 255);
+    outline: none;
+}
+
+.adding-form__button {
+    border-radius: 4px;
+}
+
+.adding-form__button:hover {
+    background-color: rgb(0, 119, 255);
+}
